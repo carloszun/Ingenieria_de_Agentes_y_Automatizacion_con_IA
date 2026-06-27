@@ -1,0 +1,10 @@
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-google-genai>=1.0.0
+langgraph>=0.2.0
+langgraph-checkpoint-sqlite>=0.1.0
+tavily-python>=0.5.0
+selenium>=4.20.0
+webdriver-manager>=4.0.0
+undetected-chromedriver>=3.5.0
+python-dotenv>=1.0.0

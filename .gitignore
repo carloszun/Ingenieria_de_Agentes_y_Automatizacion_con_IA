@@ -1,0 +1,30 @@
+# Entorno virtual (¡IMPORTANTÍSIMO!)
+.venv/
+venv/
+env/
+
+# Variables de entorno (¡Tus claves secretas!)
+.env
+.env.local
+
+# Cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Bases de datos locales (si usas SQLite para checkpoints)
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de logs
+*.log
+
+# Configuraciones de IDEs
+.vscode/
+.idea/
+*.swp
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
