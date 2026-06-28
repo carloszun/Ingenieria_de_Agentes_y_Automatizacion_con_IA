@@ -1,20 +1,24 @@
-from loader import leer_pdf, cantidad_paginas
+from .loader import leer_pdf, cantidad_paginas
+from .splitter import dividir_texto
+from utils.config import RUTA_PDF, CHUNK_SIZE, CHUNK_OVERLAP
 
+def main():
 
-RUTA_PDF = "D:/proyectos/Ingenieria_de_Agentes_y_Automatizacion_con_IA/data/DENT_Manual_Institucional.pdf"
+    paginas = leer_pdf(RUTA_PDF)
 
+    texto = "\n".join(paginas)
 
-print("=" * 50)
-print("LECTURA DEL PDF")
-print("=" * 50)
+    chunks = dividir_texto(texto)
 
-print(f"\nCantidad de páginas: {cantidad_paginas(RUTA_PDF)}")
+    print(f"Cantidad de chunks: {len(chunks)}")
 
-paginas = leer_pdf(RUTA_PDF)
+    print()
 
-print("\nPrimeras dos páginas:\n")
+    print("Primer chunk:")
 
-for i, pagina in enumerate(paginas[:2], start=1):
     print("-" * 50)
-    print(f"Página {i}\n")
-    print(pagina[:1000])   # solo muestra los primeros 1000 caracteres
+
+    print(chunks[0])
+
+if __name__ == "__main__":
+    main()
