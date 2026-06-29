@@ -1,23 +1,21 @@
-from app.loader import leer_pdf
-from app.splitter import dividir_texto
-from app.vector_store import crear_vector_store
-from utils.config import RUTA_PDF
-
+from app.vector_store import inicializar_vector_store
+from app.retriever import crear_retriever
 
 def main():
+    vector_store = inicializar_vector_store()
+    retriever = crear_retriever(vector_store)
+    
+    pregunta = "¿Cómo puedo cancelar un turno?"
 
-    paginas = leer_pdf(RUTA_PDF)
+    documentos = retriever.invoke(pregunta)
 
-    texto = "\n".join(paginas)
+    print(f"\nSe encontraron {len(documentos)} documentos.\n")
 
-    chunks = dividir_texto(texto)
-
-    print(f"Cantidad de chunks: {len(chunks)}")
-
-    vector_store = crear_vector_store(chunks)
-
-    print("✅ Vector Store creado correctamente.")
-
+    for i, doc in enumerate(documentos, start=1):
+        print("=" * 70)
+        print(f"DOCUMENTO {i}")
+        print("=" * 70)
+        print(doc.page_content)
 
 if __name__ == "__main__":
     main()
