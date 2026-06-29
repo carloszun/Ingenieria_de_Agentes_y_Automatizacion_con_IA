@@ -1,7 +1,6 @@
 from app.loader import leer_pdf
 from app.splitter import dividir_texto
-from app.embeddings import crear_embeddings
-
+from app.vector_store import crear_vector_store
 from utils.config import RUTA_PDF
 
 
@@ -15,24 +14,9 @@ def main():
 
     print(f"Cantidad de chunks: {len(chunks)}")
 
-    print()
+    vector_store = crear_vector_store(chunks)
 
-    print("Primer chunk")
-
-    print("-" * 50)
-
-    print(chunks[0])
-
-    print()
-
-    embeddings = crear_embeddings()
-
-    vector = embeddings.embed_query(
-        "¿Cuál es la política de cancelación de turnos?"
-    )
-
-    print(f"Dimensión del vector: {len(vector)}")
-    print(vector[:10])
+    print("✅ Vector Store creado correctamente.")
 
 
 if __name__ == "__main__":
