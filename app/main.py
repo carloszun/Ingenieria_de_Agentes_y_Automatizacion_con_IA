@@ -1,21 +1,21 @@
-from app.vector_store import inicializar_vector_store
-from app.retriever import crear_retriever
+from app.agent.builder import graph
+from app.agent.graph import AgentState
+
 
 def main():
-    vector_store = inicializar_vector_store()
-    retriever = crear_retriever(vector_store)
-    
-    pregunta = "¿Cómo puedo cancelar un turno?"
 
-    documentos = retriever.invoke(pregunta)
+    state: AgentState = {
+        "question": "Hola",
+        "context": "",
+        "route": "",
+        "answer": "",
+        "sources": []
+    }
 
-    print(f"\nSe encontraron {len(documentos)} documentos.\n")
+    resultado = graph.invoke(state)
 
-    for i, doc in enumerate(documentos, start=1):
-        print("=" * 70)
-        print(f"DOCUMENTO {i}")
-        print("=" * 70)
-        print(doc.page_content)
+    print(resultado["answer"])
+
 
 if __name__ == "__main__":
     main()
