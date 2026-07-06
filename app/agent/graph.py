@@ -1,5 +1,4 @@
-from typing import TypedDict
-
+from typing import Any, TypedDict
 
 class AgentState(TypedDict):
     question: str
@@ -7,3 +6,4 @@ class AgentState(TypedDict):
     route: str
     answer: str
     sources: list[str]
+    retriever: Any
