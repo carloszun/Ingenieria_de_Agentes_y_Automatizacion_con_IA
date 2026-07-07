@@ -7,3 +7,4 @@ class AgentState(TypedDict):
     answer: str
     sources: list[str]
     retriever: Any
+    llm: Any

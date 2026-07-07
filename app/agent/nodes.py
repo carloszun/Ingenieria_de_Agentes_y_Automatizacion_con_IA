@@ -1,4 +1,7 @@
+from langchain_core.messages import SystemMessage, HumanMessage
 from .graph import AgentState
+from .prompts import SYSTEM_PROMPT, RAG_PROMPT
+
 
 def nodo_saludo(state: AgentState) -> AgentState:
     """
@@ -13,19 +16,49 @@ def nodo_saludo(state: AgentState) -> AgentState:
     )
     return state
 
+
 def nodo_agradecimiento(state: AgentState) -> AgentState:
     state["answer"] = "¡De nada! Quedo a tu disposición para cualquier otra consulta."
     return state
+
 
 def nodo_despedida(state: AgentState) -> AgentState:
     state["answer"] = "¡Hasta luego! Que tengas un buen día."
     return state
 
+
 def nodo_rag(state: AgentState) -> AgentState:
-    # Aquí iría la lógica de RAG (ya la tienes definida en nodes.py)
+    """
+    Nodo de Retrieval-Augmented Generation (RAG).
+    Recupera documentos relevantes, construye el contexto y genera
+    una respuesta usando el LLM con el SYSTEM_PROMPT y RAG_PROMPT.
+    """
+    # 1. Recuperar documentos
     documentos = state["retriever"].invoke(state["question"])
-    state["context"] = "\n\n".join(doc.page_content for doc in documentos)
-    state["sources"] = [f"Documento {i+1}" for i in range(len(documentos))]
-    # Puedes agregar aquí la generación de respuesta con un LLM
-    state["answer"] = "Respuesta generada a partir de los documentos..."
+
+    # 2. Construir el contexto
+    contexto = "\n\n".join(doc.page_content for doc in documentos)
+    state["context"] = contexto
+
+    # 3. Guardar fuentes (metadatos)
+    state["sources"] = [doc.metadata for doc in documentos]
+
+    # 4. Formatear el mensaje del usuario con el contexto y la pregunta
+    user_message = RAG_PROMPT.format(
+        context=contexto,
+        question=state["question"]
+    )
+
+    # 5. Construir la lista de mensajes para LangChain
+    messages = [
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=user_message)
+    ]
+
+    # 6. Invocar al LLM (debe ser un modelo de chat de LangChain)
+    respuesta = state["llm"].invoke(messages)
+
+    # 7. Guardar la respuesta
+    state["answer"] = respuesta.content
+
     return state
