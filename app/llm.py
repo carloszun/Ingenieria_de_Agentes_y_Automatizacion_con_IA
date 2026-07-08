@@ -1,20 +1,28 @@
+"""
+Configuración del modelo de lenguaje (LLM).
+
+Crea una instancia de ChatGoogleGenerativeAI para interactuar con Gemini.
+"""
 from langchain_google_genai import ChatGoogleGenerativeAI
+from utils.config import CHAT_MODEL, get_google_api_key
 
-from utils.config import (
-    GOOGLE_API_KEY,
-    CHAT_MODEL,
-)
-
-
-def crear_llm():
+def crear_llm() -> ChatGoogleGenerativeAI:
     """
-    Crea y devuelve una instancia del modelo Gemini.
-    """
+    Crea y devuelve el modelo de chat Gemini.
 
-    llm = ChatGoogleGenerativeAI(
+    Returns:
+        ChatGoogleGenerativeAI: Modelo listo para invocar.
+
+    Parámetros:
+        - temperature=0.0: Respuestas deterministas (menos creativas, más precisas).
+
+    Nota:
+        La API key se obtiene dinámicamente desde el .env en cada llamada.
+        Si cambias la clave en el .env, la próxima vez que se ejecute esta
+        función usará la nueva clave sin necesidad de reiniciar.
+    """
+    return ChatGoogleGenerativeAI(
         model=CHAT_MODEL,
-        google_api_key=GOOGLE_API_KEY,
-        temperature=0,
+        google_api_key=get_google_api_key(),  # 🔁 Clave dinámica
+        temperature=0.0,
     )
-
-    return llm

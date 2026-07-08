@@ -1,31 +1,39 @@
+"""
+Módulo de carga de PDF.
+
+Convierte un archivo PDF en una lista de documentos de LangChain,
+uno por cada página, conservando metadatos (número de página y origen).
+"""
+from pathlib import Path
 from pypdf import PdfReader
+from langchain_core.documents import Document
 
-def leer_pdf(ruta_pdf):
+def cargar_pdf(ruta_pdf: Path) -> list[Document]:
     """
-    Lee un archivo PDF y devuelve una lista con el texto de cada página.
-    """
+    Carga un PDF y devuelve una lista de documentos.
 
+    Args:
+        ruta_pdf (Path): Ruta al archivo PDF.
+
+    Returns:
+        list[Document]: Lista de objetos Document, uno por página con texto y metadatos.
+    """
     reader = PdfReader(ruta_pdf)
+    documentos = []
 
-    paginas = []
+    for num_pagina, pagina in enumerate(reader.pages, start=1):
+        texto = pagina.extract_text() or ""
+        if not texto.strip():
+            continue
 
-    for pagina in reader.pages:
-        texto = pagina.extract_text()
+        documentos.append(
+            Document(
+                page_content=texto,
+                metadata={
+                    "page": num_pagina,
+                    "source": Path(ruta_pdf).name,
+                },
+            )
+        )
 
-        # Si una página no tiene texto, guardar una cadena vacía
-        if texto is None:
-            texto = ""
-
-        paginas.append(texto)
-
-    return paginas
-
-
-def cantidad_paginas(ruta_pdf):
-    """
-    Devuelve la cantidad de páginas del PDF.
-    """
-
-    reader = PdfReader(ruta_pdf)
-
-    return len(reader.pages)
+    return documentos

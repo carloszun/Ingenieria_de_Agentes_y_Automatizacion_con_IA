@@ -1,33 +1,21 @@
-from .graph import AgentState
+"""
+Nodo router del grafo.
+
+Clasifica la pregunta del usuario y escribe la ruta en el estado.
+"""
+from .state import AgentState
+from .classifier import clasificar_consulta
 
 def router(state: AgentState) -> AgentState:
+    """
+    Nodo que clasifica la consulta y actualiza state["route"].
 
-    pregunta = state["question"].lower()
+    Args:
+        state (AgentState): Estado actual del agente.
 
-    SALUDOS = [
-        "hola",
-        "buen día",
-        "buenos días",
-        "buenas tardes",
-        "buenas noches",
-    ]
-
-    AGRADECIMIENTOS = [
-    ]
-
-    DESPEDIDAS = [
-    ]
-
-    if any(saludo in pregunta for saludo in SALUDOS):
-        state["route"] = "saludo"
-
-    elif any(gracias in pregunta for gracias in AGRADECIMIENTOS):
-        state["route"] = "agradecimiento"
-
-    elif any(despedida in pregunta for despedida in DESPEDIDAS):
-        state["route"] = "despedida"
-
-    else:
-        state["route"] = "rag"
-
+    Returns:
+        AgentState: Estado con el campo "route" actualizado.
+    """
+    ruta = clasificar_consulta(state["question"], state["llm"])
+    state["route"] = ruta
     return state
