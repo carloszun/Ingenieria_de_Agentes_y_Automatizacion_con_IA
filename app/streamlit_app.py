@@ -134,6 +134,17 @@ if pregunta:
     # --------------------------------------------------------------------------
     # 7.2 Crear el estado inicial del agente
     # --------------------------------------------------------------------------
+    
+    history = []
+
+    for mensaje in st.session_state.messages:
+
+        history.append(
+            {
+                "role": mensaje["role"],
+                "content": mensaje["content"],
+            }
+        )
 
     state: AgentState = {
         "question": pregunta,
@@ -141,12 +152,13 @@ if pregunta:
         "route": "",
         "answer": "",
         "sources": [],
+        "history": history,
         "retriever": retriever,
         "llm": llm,
 
         # NUEVO
         # En el próximo paso LangGraph utilizará este historial.
-        "chat_history": st.session_state.messages,
+        "history": st.session_state.messages,
     }
 
     # --------------------------------------------------------------------------

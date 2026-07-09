@@ -10,7 +10,7 @@ class AgentState(TypedDict):
     answer: str
     sources: List[dict]
 
-    history: list
+    history: List[dict]
 
     retriever: Any
     llm: Any

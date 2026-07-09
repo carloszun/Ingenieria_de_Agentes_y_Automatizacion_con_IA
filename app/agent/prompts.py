@@ -83,3 +83,57 @@ Consulta:
 
 Clasificación:
 """
+
+# ============================================================
+# HISTORY_PROMPT
+# Reescribe una consulta utilizando el historial de conversación.
+#
+# Objetivo:
+# Convertir preguntas dependientes del contexto en preguntas
+# completas e independientes para mejorar la búsqueda del
+# Retriever (History-Aware RAG).
+#
+# Ejemplo:
+#
+# Historial:
+# Usuario: ¿Atienden por OSDE?
+# Asistente: Sí, atendemos por OSDE.
+#
+# Nueva pregunta:
+# ¿Qué planes?
+#
+# Respuesta esperada:
+# ¿Qué planes de OSDE atiende el Consultorio Odontológico DENT?
+#
+# Si la pregunta ya es suficientemente clara, debe devolverla
+# exactamente igual, sin modificarla.
+# ============================================================
+
+HISTORY_PROMPT = """
+Sos un asistente especializado en reescribir consultas.
+
+Tu tarea NO es responder preguntas.
+
+Tu única tarea es transformar la última pregunta del usuario en una pregunta
+completa e independiente utilizando el historial de la conversación.
+
+Reglas:
+
+- Utilizá el historial únicamente para agregar el contexto que falte.
+- No inventes información.
+- No respondas la pregunta.
+- No agregues explicaciones.
+- No agregues texto adicional.
+- Devolvé únicamente la pregunta reescrita.
+- Si la pregunta ya es clara por sí sola, devolvela exactamente igual.
+
+Historial:
+
+{history}
+
+Pregunta del usuario:
+
+{question}
+
+Pregunta reescrita:
+"""

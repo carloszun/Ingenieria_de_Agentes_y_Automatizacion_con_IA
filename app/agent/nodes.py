@@ -16,6 +16,7 @@ from langchain_core.messages import (
 
 from .state import AgentState
 from .prompts import SYSTEM_PROMPT, RAG_PROMPT
+from .history import reescribir_consulta
 
 
 def nodo_saludo(state: AgentState) -> AgentState:
@@ -88,7 +89,7 @@ def nodo_rag(state: AgentState) -> AgentState:
     Novedad:
 
     Ahora el nodo incorpora el historial de conversación almacenado
-    en state["chat_history"].
+    en state["history"].
 
     Esto permite que el modelo conozca el contexto conversacional
     (preguntas anteriores y respuestas anteriores).
@@ -115,16 +116,32 @@ def nodo_rag(state: AgentState) -> AgentState:
     """
 
     # ==========================================================
-    # 1. Recuperar documentos
+    # 1. Reescribir la consulta utilizando el historial
     # ==========================================================
 
-    documentos = state["retriever"].invoke(
-        state["question"]
+    pregunta_reescrita = reescribir_consulta(
+        question=state["question"],
+        history=state["history"],
+        llm=state["llm"],
     )
 
     # ==========================================================
-    # 2. Si no hay documentos
+    # DEBUG (temporal)
     # ==========================================================
+
+    print("\nPregunta original:")
+    print(state["question"])
+
+    print("\nPregunta reescrita:")
+    print(pregunta_reescrita)
+
+    # ==========================================================
+    # 2. Recuperar documentos utilizando la consulta reescrita
+    # ==========================================================
+
+    documentos = state["retriever"].invoke(
+        pregunta_reescrita
+    )
 
     if not documentos:
 
@@ -177,7 +194,7 @@ def nodo_rag(state: AgentState) -> AgentState:
         SystemMessage(content=SYSTEM_PROMPT)
     ]
 
-    for mensaje in state["chat_history"]:
+    for mensaje in state["history"]:
 
         if mensaje["role"] == "user":
 
