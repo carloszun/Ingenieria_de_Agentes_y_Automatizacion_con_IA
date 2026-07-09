@@ -9,5 +9,8 @@ class AgentState(TypedDict):
     route: str
     answer: str
     sources: List[dict]
+
+    history: list
+
     retriever: Any
     llm: Any

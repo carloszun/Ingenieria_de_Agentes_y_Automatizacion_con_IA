@@ -5,9 +5,9 @@ Inicializa el vector store, el retriever, el LLM y el grafo,
 luego ejecuta un loop interactivo para consultar al asistente.
 """
 import sys
-from app.vector_store import inicializar_vector_store
-from app.retriever import crear_retriever
-from app.llm import crear_llm
+from app.agent.rag.vector_store import inicializar_vector_store
+from app.agent.rag.retriever import crear_retriever
+from app.agent.rag.llm import crear_llm
 from app.agent.builder import graph
 from app.agent.state import AgentState
 from utils.documentos import nombre_documento

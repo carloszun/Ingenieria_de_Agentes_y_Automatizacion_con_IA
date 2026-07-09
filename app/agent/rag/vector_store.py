@@ -2,8 +2,8 @@
 Creación del vector store con FAISS.
 """
 from langchain_community.vectorstores import FAISS
-from app.loader import cargar_pdf
-from app.embeddings import crear_embeddings
+from app.agent.rag.loader import cargar_pdf
+from app.agent.rag.embeddings import crear_embeddings
 from utils.config import RUTA_PDF
 
 def inicializar_vector_store() -> FAISS:

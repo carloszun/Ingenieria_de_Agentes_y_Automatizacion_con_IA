@@ -26,31 +26,34 @@ CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
 
 # =============================================================================
-# CONFIGURACIÓN DE MODELOS
+# CONFIGURACIÓN DE MODELOS - EMBEDDINGS (Gemini)
 # =============================================================================
 EMBEDDING_MODEL = "models/gemini-embedding-2"
-CHAT_MODEL = "gemini-2.0-flash"
-
 
 # =============================================================================
-# CLAVE API CON RECARGA DINÁMICA
+# CONFIGURACIÓN DE CHAT - DEEPSEEK (ACTIVO)
+# =============================================================================
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+DEEPSEEK_CHAT_MODEL = "deepseek-chat"  # o "deepseek-reasoner"
+DEEPSEEK_API_BASE = "https://api.deepseek.com/v1"
+
+# =============================================================================
+# CONFIGURACIÓN DE CHAT - GEMINI (COMENTADO - PARA REFERENCIA FUTURA)
+# =============================================================================
+# CHAT_MODEL_GEMINI = "gemini-2.0-flash"
+# GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# =============================================================================
+# FUNCIÓN PARA OBTENER LA CLAVE DE GEMINI (SOLO PARA EMBEDDINGS)
 # =============================================================================
 def get_google_api_key() -> str:
     """
-    Devuelve la API key de Google leyéndola del archivo .env CADA VEZ.
-
-    Esto permite cambiar la clave en el .env sin reiniciar el programa.
-    Si la clave no está definida, lanza un error claro.
+    Devuelve la API key de Google para embeddings.
     """
-    # Recargar el .env para obtener el valor actualizado
-    load_dotenv(override=True)  # override=True fuerza la recarga
     api_key = os.getenv("GOOGLE_API_KEY")
-
     if not api_key:
         raise ValueError(
             "❌ GOOGLE_API_KEY no definida en el archivo .env.\n"
-            "Asegúrate de tener una línea como:\n"
-            "GOOGLE_API_KEY=AIzaSyA..."
+            "Se necesita para generar embeddings."
         )
-
     return api_key
