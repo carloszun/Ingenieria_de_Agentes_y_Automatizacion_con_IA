@@ -25,6 +25,7 @@ def crear_estado(
     history: list,
     retriever,
     llm,
+    status,
 ) -> AgentState:
     """
     Crea el estado inicial del agente.
@@ -61,6 +62,8 @@ def crear_estado(
 
         "sources": [],
 
+                
+
         # ----------------------------------------------------------
         # Se pasa una copia del historial para evitar modificaciones
         # accidentales durante la ejecución del grafo.
@@ -71,5 +74,9 @@ def crear_estado(
         "retriever": retriever,
 
         "llm": llm,
+
+        "status": status,
+
+        "metrics": {},
 
     }

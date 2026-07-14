@@ -39,6 +39,7 @@ ROOT_DIR = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT_DIR))
 
 import streamlit as st
+import time
 
 # ------------------------------------------------------------------------------
 # Componentes principales del agente
@@ -51,6 +52,9 @@ from app.agent.rag.vector_store import inicializar_vector_store
 from app.agent.rag.retriever import crear_retriever
 from app.agent.rag.llm import crear_llm
 from app.agent.factory import crear_estado
+from ui.debug import mostrar_debug
+from ui.status import crear_status
+from app.agent.classifier import clasificar_consulta
 
 # ------------------------------------------------------------------------------
 # Componentes de la interfaz
@@ -161,10 +165,34 @@ if "messages" not in st.session_state:
 # ==============================================================================
 
 metricas = calcular_metricas(
-    st.session_state.messages
+
+    st.session_state.messages,
+
+    st.session_state.get(
+        "last_response_time",
+        0.0,
+    ),
+
 )
 
-mostrar_sidebar(metricas)
+if mostrar_sidebar(metricas):
+
+    st.session_state.messages = [
+
+        {
+            "role": "assistant",
+
+            "content":
+                "¡Hola! Soy el asistente virtual del "
+                "Consultorio Odontológico DENT.\n\n"
+                "¿En qué puedo ayudarte?"
+        }
+
+    ]
+
+    st.session_state.last_response_time = 0.0
+
+    st.rerun()
 
 # ==============================================================================
 # CHAT
@@ -220,12 +248,22 @@ with st.chat_message("user"):
 #
 # Esto permite mantener este archivo limpio y evita duplicación de código.
 # ==============================================================================
+ruta = clasificar_consulta(
+    pregunta,
+    llm,
+)
+
+status = None
+
+if ruta == "rag":
+    status = crear_status()
 
 state = crear_estado(
     question=pregunta,
     history=st.session_state.messages,
     retriever=retriever,
     llm=llm,
+    status=status,
 )
 
 # ==============================================================================
@@ -235,16 +273,27 @@ state = crear_estado(
 # procesando la consulta.
 # ==============================================================================
 
-with st.spinner("Consultando documentación..."):
+inicio = time.perf_counter()
 
-    resultado = graph.invoke(state)
+resultado = graph.invoke(state)
+
+fin = time.perf_counter()
+
+if status:
+    status.finalizar()
+
+# -------------------------------------------------------------
+# Guardar tiempo de respuesta
+# -------------------------------------------------------------
+
+resultado["metrics"]["response_time"] = fin - inicio
+
+st.session_state.last_response_time = resultado["metrics"]["response_time"]
 
 # ==============================================================================
 # FORMATEO DE LAS FUENTES
 #
 # La lógica se encuentra encapsulada dentro de ui/sources.py.
-#
-# Si no existen fuentes se devuelve una cadena vacía.
 # ==============================================================================
 
 fuentes_texto = formatear_fuentes(
@@ -253,6 +302,9 @@ fuentes_texto = formatear_fuentes(
 
 # ==============================================================================
 # MOSTRAR RESPUESTA DEL ASISTENTE
+#
+# Si el usuario activó el Modo Debug desde la sidebar,
+# también se mostrará el panel técnico debajo de la respuesta.
 # ==============================================================================
 
 with st.chat_message("assistant"):
@@ -267,12 +319,22 @@ with st.chat_message("assistant"):
             fuentes_texto
         )
 
+    # ----------------------------------------------------------
+    # Panel Debug
+    # ----------------------------------------------------------
+
+    if st.session_state.get("debug", False):
+        
+        mostrar_debug(
+            resultado["metrics"]
+        )
+
+
 # ==============================================================================
 # ACTUALIZAR HISTORIAL
 #
-# Se almacena la respuesta del asistente junto con las fuentes
-# utilizadas para que la conversación pueda reconstruirse
-# completamente en futuros renderizados.
+# Se almacena la respuesta junto con las fuentes y las métricas
+# utilizadas durante esa consulta.
 # ==============================================================================
 
 st.session_state.messages.append(
@@ -284,6 +346,8 @@ st.session_state.messages.append(
         "content": resultado["answer"],
 
         "sources": fuentes_texto,
+
+        "metrics": resultado["metrics"],
 
     }
 

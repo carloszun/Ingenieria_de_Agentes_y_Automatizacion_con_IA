@@ -1,51 +1,58 @@
 """
-Métricas de la interfaz de usuario.
+Métricas de la interfaz.
 
-Este módulo concentra todas las funciones relacionadas con estadísticas
-de la conversación y del estado de la aplicación.
+Este módulo centraliza el cálculo de estadísticas relacionadas con la
+conversación del usuario.
 
-La idea es mantener esta lógica fuera de streamlit_app.py para que
-el archivo principal actúe únicamente como orquestador de la interfaz.
+Su objetivo es mantener toda la lógica de métricas fuera de la interfaz
+(Streamlit), facilitando el mantenimiento y futuras ampliaciones.
 
 Actualmente calcula:
 
 - Cantidad total de mensajes.
-- Cantidad de preguntas del usuario.
-- Cantidad de respuestas del asistente.
+- Cantidad de consultas realizadas.
+- Cantidad de respuestas generadas.
+- Cantidad total de fuentes consultadas.
+- Tiempo de la última respuesta.
 
-En el futuro podrá incorporar:
+En futuras versiones podrá incorporar:
 
 - Tiempo promedio de respuesta.
-- Tokens consumidos.
-- Cantidad de consultas RAG.
-- Cantidad de consultas fuera de dominio.
-- Tiempo total de la sesión.
+- Tiempo máximo y mínimo.
+- Cantidad de tokens consumidos.
+- Costo estimado.
+- Cantidad de conversaciones.
 """
 
-from typing import Dict, List
+from typing import List
 
 
-def calcular_metricas(messages: List[dict]) -> Dict[str, int]:
+def calcular_metricas(
+    messages: List[dict],
+    tiempo: float = 0.0,
+) -> dict:
     """
-    Calcula estadísticas básicas de la conversación.
+    Calcula las métricas generales de la conversación.
 
-    Parámetros
+    Parameters
     ----------
-    messages : list
-        Historial almacenado en st.session_state.messages.
+    messages : List[dict]
+        Historial completo de la conversación almacenado en
+        st.session_state.messages.
 
-    Retorna
+    tiempo : float, optional
+        Tiempo empleado en generar la última respuesta,
+        expresado en segundos.
+
+    Returns
     -------
     dict
-
-    Ejemplo:
-
-    {
-        "total": 8,
-        "preguntas": 4,
-        "respuestas": 4,
-    }
+        Diccionario con todas las métricas de la conversación.
     """
+
+    # ------------------------------------------------------------------
+    # Cantidad de consultas realizadas por el usuario
+    # ------------------------------------------------------------------
 
     preguntas = sum(
         1
@@ -53,14 +60,69 @@ def calcular_metricas(messages: List[dict]) -> Dict[str, int]:
         if mensaje["role"] == "user"
     )
 
+    # ------------------------------------------------------------------
+    # Cantidad de respuestas generadas por el asistente
+    # ------------------------------------------------------------------
+
     respuestas = sum(
         1
         for mensaje in messages
         if mensaje["role"] == "assistant"
     )
 
+    # ------------------------------------------------------------------
+    # Cantidad total de fuentes consultadas
+    #
+    # Cada respuesta puede contener una lista de fuentes en el campo
+    # "sources". Se contabilizan todas las fuentes utilizadas durante
+    # la conversación.
+    # ------------------------------------------------------------------
+
+    fuentes = 0
+
+    for mensaje in messages:
+
+        if mensaje["role"] != "assistant":
+            continue
+
+        if "sources" not in mensaje:
+            continue
+
+        if not mensaje["sources"]:
+            continue
+
+        if isinstance(mensaje["sources"], list):
+
+            fuentes += len(mensaje["sources"])
+
+        else:
+            fuentes += 1
+
+    # ------------------------------------------------------------------
+    # Construcción del resultado
+    # ------------------------------------------------------------------
+
     return {
+
+        # Cantidad total de mensajes
         "total": len(messages),
+
+        # Consultas del usuario
         "preguntas": preguntas,
+
+        # Respuestas del asistente
         "respuestas": respuestas,
+
+        # Total de fuentes utilizadas
+        "fuentes": fuentes,
+
+        # Tiempo de la última respuesta
+        "tiempo": tiempo,
+
+        # Indicador de memoria conversacional
+        "memoria": True,
+
+        # Framework utilizado
+        "framework": "LangGraph",
+
     }

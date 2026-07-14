@@ -1,11 +1,26 @@
 """
-Nodos del grafo de LangGraph.
+Nodos del agente LangGraph.
 
-Cada función representa un nodo del grafo y recibe un AgentState.
-El nodo procesa la información y devuelve el mismo estado con nuevos
-campos completados (respuesta, contexto, fuentes, etc.).
+Este módulo implementa la lógica de cada nodo del flujo conversacional.
 
-En este módulo se implementa el nodo RAG principal del asistente.
+Responsabilidades
+-----------------
+- Saludo.
+- Despedida.
+- Agradecimiento.
+- Flujo principal RAG.
+- Construcción del contexto.
+- Recuperación de documentos.
+- Generación de respuestas.
+
+Cada nodo recibe un AgentState y devuelve el mismo estado
+actualizado.
+
+El nodo RAG implementa además:
+
+- History-Aware Retrieval.
+- Métricas.
+- Actualización del estado visual de Streamlit.
 """
 
 from langchain_core.messages import (
@@ -15,109 +30,106 @@ from langchain_core.messages import (
 )
 
 from .state import AgentState
-from .prompts import SYSTEM_PROMPT, RAG_PROMPT
+
 from .history import reescribir_consulta
 
+from .prompts import (
+    SYSTEM_PROMPT,
+    RAG_PROMPT,
+)
+
+
+# =============================================================================
+# NODO SALUDO
+# =============================================================================
 
 def nodo_saludo(state: AgentState) -> AgentState:
     """
-    Responde cuando el usuario únicamente saluda.
+    Responde un saludo inicial.
     """
+
+    texto = state["question"].lower()
+
+    if "buen día" in texto or "buen dia" in texto:
+        saludo = "¡Buen día!"
+
+    elif "buenas tardes" in texto:
+        saludo = "¡Buenas tardes!"
+
+    elif "buenas noches" in texto:
+        saludo = "¡Buenas noches!"
+
+    else:
+        saludo = "¡Hola!"
+
     state["answer"] = (
-        "¡Hola! Soy el asistente virtual del Consultorio Odontológico DENT.\n\n"
-        "Estoy preparado para responder consultas sobre turnos, convenios, "
-        "políticas e información contenida en la documentación del consultorio.\n\n"
+        f"{saludo}\n\n"
+        "Soy el asistente virtual del Consultorio Odontológico DENT.\n\n"
         "¿En qué puedo ayudarte?"
     )
 
     return state
 
 
+# =============================================================================
+# NODO AGRADECIMIENTO
+# =============================================================================
+
 def nodo_agradecimiento(state: AgentState) -> AgentState:
     """
-    Responde cuando el usuario agradece.
+    Responde un agradecimiento.
     """
+
     state["answer"] = (
-        "¡De nada! Quedo a tu disposición para cualquier otra consulta."
+        "¡De nada! 😊\n\n"
+        "Estoy para ayudarte."
     )
 
     return state
 
+
+# =============================================================================
+# NODO DESPEDIDA
+# =============================================================================
 
 def nodo_despedida(state: AgentState) -> AgentState:
     """
-    Responde cuando el usuario se despide.
+    Responde una despedida.
     """
+
     state["answer"] = (
-        "¡Hasta luego! Que tengas un buen día."
+        "¡Hasta luego!\n\n"
+        "Gracias por comunicarte con el "
+        "Consultorio Odontológico DENT."
     )
 
     return state
 
 
-def nodo_fuera_dominio(state: AgentState) -> AgentState:
-    """
-    Responde cuando la consulta no pertenece al dominio del consultorio.
-    """
-    state["answer"] = (
-        "Soy el asistente virtual del Consultorio Odontológico DENT.\n\n"
-        "Puedo responder únicamente consultas relacionadas con turnos, horarios, "
-        "convenios, políticas y demás información contenida en la documentación "
-        "del consultorio.\n\n"
-        "Si tenés alguna consulta sobre DENT, estaré encantado de ayudarte."
-    )
-
-    return state
-
+# =============================================================================
+# NODO PRINCIPAL RAG
+# =============================================================================
 
 def nodo_rag(state: AgentState) -> AgentState:
     """
-    Nodo principal de Retrieval-Augmented Generation (RAG).
-
-    Flujo general:
-
-        1. Recupera documentos relevantes utilizando el Retriever.
-        2. Si no encuentra documentos, devuelve una respuesta estándar.
-        3. Construye el contexto concatenando los documentos recuperados.
-        4. Guarda las fuentes sin duplicados.
-        5. Construye el historial de conversación.
-        6. Invoca al LLM.
-        7. Guarda la respuesta en el estado.
-
-    --------------------------------------------------------------------------
-
-    Novedad:
-
-    Ahora el nodo incorpora el historial de conversación almacenado
-    en state["history"].
-
-    Esto permite que el modelo conozca el contexto conversacional
-    (preguntas anteriores y respuestas anteriores).
-
-    IMPORTANTE:
-
-    Todavía el Retriever sigue buscando únicamente utilizando
-    la pregunta actual.
-
-    La memoria conversacional ayuda al LLM a interpretar referencias
-    como:
-
-        Usuario:
-            ¿Atienden por OSDE?
-
-        Asistente:
-            Sí...
-
-        Usuario:
-            ¿Y qué planes?
-
-    pero todavía NO mejora la búsqueda vectorial.
-    Eso lo implementaremos en el siguiente paso.
+    Flujo principal Retrieval-Augmented Generation.
     """
 
-    # ==========================================================
-    # 1. Reescribir la consulta utilizando el historial
-    # ==========================================================
+    # =====================================================================
+    # ETAPA 1
+    # =====================================================================
+
+    state["status"].actualizar(
+        "🧠 Analizando consulta..."
+    )
+
+    # =====================================================================
+    # Reescritura utilizando History-Aware Retrieval
+    # =====================================================================
+
+    state["status"].actualizar(
+        "🔄 Reescribiendo consulta..."
+    )
 
     pregunta_reescrita = reescribir_consulta(
         question=state["question"],
@@ -125,9 +137,13 @@ def nodo_rag(state: AgentState) -> AgentState:
         llm=state["llm"],
     )
 
-    # ==========================================================
-    # DEBUG (temporal)
-    # ==========================================================
+    # =====================================================================
+    # Métricas
+    # =====================================================================
+
+    state["metrics"]["original_question"] = state["question"]
+
+    state["metrics"]["rewritten_question"] = pregunta_reescrita
 
     print("\nPregunta original:")
     print(state["question"])
@@ -135,28 +151,58 @@ def nodo_rag(state: AgentState) -> AgentState:
     print("\nPregunta reescrita:")
     print(pregunta_reescrita)
 
-    # ==========================================================
-    # 2. Recuperar documentos utilizando la consulta reescrita
-    # ==========================================================
+    # =====================================================================
+    # Recuperación de documentos
+    # =====================================================================
+
+    state["status"].actualizar(
+        "🔎 Buscando documentación..."
+    )
 
     documentos = state["retriever"].invoke(
         pregunta_reescrita
     )
 
+    state["metrics"]["documents"] = len(documentos)
+
+    # =====================================================================
+    # Sin documentos
+    # =====================================================================
+
     if not documentos:
 
+        state["status"].error(
+            "No se encontraron documentos relevantes."
+        )
+
         state["answer"] = (
-            "No encontré esa información en la documentación del consultorio DENT."
+            "No encontré esa información en la documentación "
+            "del consultorio DENT."
         )
 
         state["context"] = ""
+
         state["sources"] = []
+
+        state["metrics"]["documents"] = 0
+
+        state["metrics"]["sources"] = 0
 
         return state
 
-    # ==========================================================
-    # 3. Construcción del contexto
-    # ==========================================================
+    state["metrics"]["route"] = state["route"]
+
+    # =====================================================================
+    # Preparación del contexto
+    # =====================================================================
+
+    state["status"].actualizar(
+        "📄 Preparando contexto..."
+    )
+
+    # =====================================================================
+    # Construcción del contexto
+    # =====================================================================
 
     contexto = "\n\n".join(
         doc.page_content
@@ -165,33 +211,48 @@ def nodo_rag(state: AgentState) -> AgentState:
 
     state["context"] = contexto
 
-    # ==========================================================
-    # 4. Construcción de fuentes
-    # ==========================================================
+    # =====================================================================
+    # Construcción de las fuentes
+    # =====================================================================
 
     sources = []
 
     for doc in documentos:
 
         fuente = {
+
             "page": doc.metadata.get("page"),
+
             "source": doc.metadata.get("source"),
+
         }
 
         if fuente not in sources:
+
             sources.append(fuente)
 
     state["sources"] = sorted(
+
         sources,
-        key=lambda x: x["page"]
+
+        key=lambda x: x["page"],
+
     )
 
-    # ==========================================================
-    # 5. Construcción del historial de conversación
-    # ==========================================================
+    state["metrics"]["sources"] = len(
+        state["sources"]
+    )
+
+    # =====================================================================
+    # Construcción del historial para el LLM
+    # =====================================================================
 
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT)
+
+        SystemMessage(
+            content=SYSTEM_PROMPT
+        )
+
     ]
 
     for mensaje in state["history"]:
@@ -199,42 +260,103 @@ def nodo_rag(state: AgentState) -> AgentState:
         if mensaje["role"] == "user":
 
             messages.append(
+
                 HumanMessage(
                     content=mensaje["content"]
                 )
+
             )
 
         elif mensaje["role"] == "assistant":
 
             messages.append(
+
                 AIMessage(
                     content=mensaje["content"]
                 )
+
             )
 
-    # ==========================================================
-    # 6. Agregar el prompt RAG con contexto
-    # ==========================================================
+    # =====================================================================
+    # Prompt final RAG
+    # =====================================================================
 
     user_message = RAG_PROMPT.format(
+
         context=contexto,
-        question=state["question"]
+
+        question=state["question"],
+
     )
 
     messages.append(
-        HumanMessage(content=user_message)
+
+        HumanMessage(
+            content=user_message
+        )
+
     )
 
-    # ==========================================================
-    # 7. Invocar el modelo
-    # ==========================================================
+    # =====================================================================
+    # Generación de la respuesta
+    # =====================================================================
 
-    respuesta = state["llm"].invoke(messages)
+    state["status"].actualizar(
+        "🤖 Generando respuesta..."
+    )
 
-    # ==========================================================
-    # 8. Guardar respuesta
-    # ==========================================================
+    respuesta = state["llm"].invoke(
+        messages
+    )
 
     state["answer"] = respuesta.content
+
+    # =====================================================================
+    # Respuesta generada correctamente
+    # =====================================================================
+
+    state["status"].finalizar()
+
+    # =====================================================================
+    # Fin del nodo
+    #
+    # En este punto el AgentState contiene:
+    #
+    # - answer
+    # - context
+    # - sources
+    # - history
+    # - metrics
+    #
+    # Las métricas serán utilizadas posteriormente por:
+    #
+    # - Sidebar
+    # - Panel Debug
+    # - Estadísticas
+    #
+    # El componente visual de estado ya fue actualizado
+    # mediante state["status"].
+    # =====================================================================
+
+    return state
+
+# =============================================================================
+# NODO FUERA DE DOMINIO
+# =============================================================================
+
+def nodo_fuera_dominio(state: AgentState) -> AgentState:
+    """
+    Responde consultas que no pertenecen al dominio del
+    Consultorio Odontológico DENT.
+
+    Este nodo evita que el asistente responda preguntas
+    sobre temas ajenos a la documentación del consultorio.
+    """
+
+    state["answer"] = (
+        "Lo siento, solamente puedo responder consultas "
+        "relacionadas con el Consultorio Odontológico DENT "
+        "y la información contenida en su documentación."
+    )
 
     return state

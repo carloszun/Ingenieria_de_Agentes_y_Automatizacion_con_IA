@@ -6,23 +6,22 @@ Centraliza toda la información complementaria del asistente.
 Actualmente muestra:
 
 - Estadísticas de la conversación.
-- Información del proyecto.
-- Modelo utilizado.
-- Embeddings.
-- Vector Store.
 - Estado del agente.
-
-En futuras versiones podrá contener:
-
-- Nueva conversación.
-- Exportar conversación.
-- Configuración.
-- Información del repositorio.
 - Tiempo de respuesta.
-- Tokens consumidos.
+- Información del proyecto.
+
+También permite:
+
+- Iniciar una nueva conversación.
+- Activar o desactivar el Modo Debug.
+
+El estado del Modo Debug se almacena en
+st.session_state.debug para que pueda ser utilizado
+por el resto de la aplicación.
 """
 
 import streamlit as st
+from ui.documents import mostrar_documentos
 
 from utils.config import (
     DEEPSEEK_CHAT_MODEL,
@@ -30,24 +29,23 @@ from utils.config import (
 )
 
 
-def mostrar_sidebar(metricas: dict) -> None:
+def mostrar_sidebar(metricas: dict) -> bool:
     """
     Construye la barra lateral de la aplicación.
 
     Parámetros
     ----------
     metricas : dict
+        Diccionario generado por calcular_metricas().
 
-        Diccionario generado por ui.metrics.calcular_metricas().
-
-        Ejemplo:
-
-        {
-            "total": 12,
-            "preguntas": 6,
-            "respuestas": 6,
-        }
+    Retorna
+    -------
+    bool
+        True si el usuario presionó el botón
+        "Nueva conversación".
     """
+
+    nueva_conversacion = False
 
     with st.sidebar:
 
@@ -62,29 +60,55 @@ def mostrar_sidebar(metricas: dict) -> None:
         st.divider()
 
         # ==========================================================
-        # ESTADÍSTICAS
+        # ESTADÍSTICAS DE LA CONVERSACIÓN
         # ==========================================================
 
         st.subheader("📊 Estadísticas")
 
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([2, 1])  # Ajusta el ancho, la primera columna es más ancha
 
         with col1:
-            st.metric(
-                "Mensajes",
-                metricas["total"],
-            )
-
-            st.metric(
-                "Preguntas",
-                metricas["preguntas"],
-            )
+            st.write("💬 **Mensajes:**")
+            st.write("❓ **Preguntas:**")
+            st.write("🧠 **Respuestas:**")
+            st.write("⚡ **Tiempo:**")
 
         with col2:
-            st.metric(
-                "Respuestas",
-                metricas["respuestas"],
-            )
+            st.write(metricas['total'])
+            st.write(metricas['preguntas'])
+            st.write(metricas['respuestas'])
+            st.write(f"{metricas['tiempo']:.2f} s")
+#        st.write(f"💬 **Mensajes:** {metricas['total']}")
+#        st.write(f"❓ **Preguntas:** {metricas['preguntas']}")
+#        st.write(f"🤖 **Respuestas:** {metricas['respuestas']}")
+#        st.write(f"⚡ **Tiempo:** {metricas['tiempo']:.2f} s")
+
+        st.divider()
+
+        # ==========================================================
+        # MODO DEBUG
+        #
+        # Permite mostrar u ocultar la información técnica
+        # debajo de cada respuesta del asistente.
+        #
+        # El estado queda almacenado en Session State para
+        # que pueda ser consultado desde streamlit_app.py.
+        # ==========================================================
+
+        st.subheader("🛠 Desarrollo")
+
+        st.session_state.debug = st.toggle(
+            "Mostrar información técnica",
+            value=st.session_state.get(
+                "debug",
+                False,
+            ),
+            help=(
+                "Muestra información interna del agente "
+                "como la pregunta reescrita, cantidad de "
+                "documentos recuperados y métricas de ejecución."
+            ),
+        )
 
         st.divider()
 
@@ -108,6 +132,22 @@ def mostrar_sidebar(metricas: dict) -> None:
 
         st.divider()
 
+        mostrar_documentos()
+
+        st.divider()
+
+        # ==========================================================
+        # NUEVA CONVERSACIÓN
+        # ==========================================================
+
+        if st.button(
+            "🗑 Nueva conversación",
+            use_container_width=True,
+        ):
+            nueva_conversacion = True
+
+        st.divider()
+
         # ==========================================================
         # INFORMACIÓN
         # ==========================================================
@@ -121,3 +161,5 @@ def mostrar_sidebar(metricas: dict) -> None:
         st.caption(
             "Ingeniería de Agentes y Automatización con IA"
         )
+
+    return nueva_conversacion

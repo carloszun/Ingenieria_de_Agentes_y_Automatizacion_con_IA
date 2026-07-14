@@ -1,26 +1,47 @@
 """
-Creación del vector store con FAISS.
+Creación del Vector Store con FAISS.
+
+En esta versión el índice se construye utilizando todos los
+archivos PDF presentes en la carpeta data/.
+
+Esto permite ampliar la base documental sin modificar el código
+del asistente.
 """
+
 from langchain_community.vectorstores import FAISS
-from app.agent.rag.loader import cargar_pdf
+
+from app.agent.rag.loader import cargar_todos_los_pdfs
 from app.agent.rag.embeddings import crear_embeddings
-from utils.config import RUTA_PDF
+
 
 def inicializar_vector_store() -> FAISS:
     """
-    Inicializa el vector store con el contenido del PDF institucional.
+    Inicializa el Vector Store con todos los PDF
+    encontrados en la carpeta data/.
+
+    Returns
+    -------
+    FAISS
+        Vector Store listo para realizar búsquedas semánticas.
     """
-    print("📄 Cargando PDF...")
-    documentos = cargar_pdf(RUTA_PDF)
+
+    print("📄 Cargando documentos...")
+
+    documentos = cargar_todos_los_pdfs()
+
     print(f"📄 {len(documentos)} páginas cargadas.")
 
     print("🧠 Generando embeddings...")
+
     embeddings = crear_embeddings()
 
-    print("💾 Creando vector store...")
+    print("💾 Creando Vector Store...")
+
     vector_store = FAISS.from_documents(
         documents=documentos,
         embedding=embeddings,
     )
-    print("✅ Vector store creado correctamente.")
+
+    print("✅ Vector Store creado correctamente.")
+
     return vector_store
