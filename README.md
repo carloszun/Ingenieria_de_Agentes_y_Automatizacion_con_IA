@@ -28,6 +28,26 @@ Toda la aplicación fue desarrollada utilizando una arquitectura modular basada 
 
 ---
 
+## 📋 Índice
+
+- [📖 Descripción](#-descripción)
+- [✨ Características](#-características-principales)
+- [🏗 Arquitectura](#-arquitectura)
+- [📂 Estructura del proyecto](#-estructura-del-proyecto)
+- [⚙️ Instalación](#️-instalación)
+- [🔑 Configuración](#-configuración)
+- [▶️ Uso de la aplicación](#️-uso-de-la-aplicación)
+- [🧠 Funcionamiento interno](#-funcionamiento-interno)
+- [🧩 Componentes principales](#-componentes-principales)
+- [📸 Capturas de pantalla](#-capturas-de-pantalla)
+- [🚀 Roadmap](#-roadmap)
+- [👨‍💻 Autor](#-autor)
+- [📄 Licencia](#-licencia)
+- [🙏 Agradecimientos](#-agradecimientos)
+- [⭐ ¿Te resultó útil este proyecto?](#-te-resultó-útil-este-proyecto)
+
+---
+
 ## ✨ Características principales
 
 - ✅ Arquitectura basada en LangGraph
@@ -648,3 +668,82 @@ Principalmente incluye:
 ### Debug interactivo (vista del panel)
 
 ![Modo Debug](assets/screenshots/debug.png)
+
+## 🚀 Roadmap
+
+Las siguientes funcionalidades representan la evolución del proyecto.
+
+### Interfaz
+
+- [x] Chat conversacional.
+- [x] Estados visuales del agente.
+- [x] Modo Debug.
+- [ ] Streaming de respuestas en tiempo real.
+- [ ] Tema claro y oscuro.
+
+### Vista de gestión documental
+
+- [x] Visualización de la base documental.
+- [x] Incorporación de nuevos documentos PDF.
+- [x] Eliminación de documentos PDF.
+- [x] Reconstrucción automática del índice FAISS.
+- [ ] Soporte para documentos DOCX y TXT.
+
+### Inteligencia del agente
+
+- [x] Arquitectura basada en LangGraph.
+- [x] Router inteligente.
+- [x] Retrieval-Augmented Generation (RAG).
+- [x] History-Aware Retrieval.
+- [x] Memoria conversacional.
+- [ ] Citas textuales del documento en las respuestas.
+- [ ] Soporte para múltiples proveedores de LLM.
+
+### Rendimiento
+
+- [ ] Persistencia del índice FAISS en disco.
+- [ ] Indexación incremental de documentos.
+- [ ] Caché de embeddings.
+
+### Despliegue
+
+- [ ] Contenedor Docker.
+- [ ] Despliegue en Oracle Cloud Infrastructure (OCI).
+- [ ] Autenticación de usuarios.
+- [ ] Panel de administración.
+
+## 👨‍💻 Autor
+
+Carlos Zunino
+
+Proyecto desarrollado como trabajo práctico para la materia **Ingeniería de Agentes y Automatización con IA**, aplicando técnicas de Inteligencia Artificial Generativa, Retrieval-Augmented Generation (RAG) y orquestación de agentes mediante LangGraph.
+
+- [GitHub](https://github.com/carloszun)
+- [LinkedIn](https://www.linkedin.com/in/carlos-zunino-a847121b/)
+- [Email](zunino.carlos@gmail.com)
+
+## 📄 Licencia
+
+Este proyecto se distribuye bajo la licencia **MIT**.
+
+Consulte el archivo [LICENSE](LICENSE) para obtener más información sobre los términos de uso y distribución.
+
+---
+
+## 🙏 Agradecimientos
+
+Quiero expresar mi sincero agradecimiento a **Alura Latam** y al programa **Oracle Next Education (ONE)** por brindar una formación de calidad y la oportunidad de desarrollar proyectos que permiten aplicar conocimientos en situaciones reales.
+
+A lo largo de este proyecto pude profundizar en el uso de tecnologías como **LangChain**, **LangGraph**, **Retrieval-Augmented Generation (RAG)**, **Streamlit** y modelos de Inteligencia Artificial Generativa, integrando conceptos de arquitectura de software, desarrollo de agentes inteligentes y procesamiento de documentos.
+
+También agradezco a los instructores, mentores y a toda la comunidad de aprendizaje por compartir conocimientos, experiencias y fomentar el crecimiento profesional mediante una formación basada en la práctica y la colaboración.
+
+Este proyecto representa el resultado del aprendizaje adquirido durante el programa y constituye un paso más en mi camino de formación como desarrollador de soluciones basadas en Inteligencia Artificial.
+
+---
+
+## ⭐ ¿Te resultó útil este proyecto?
+
+Si este proyecto te resultó interesante o te ayudó a comprender cómo construir un agente inteligente con LangGraph y RAG, podés apoyar su desarrollo dejando una **⭐** en este repositorio.
+
+¡Gracias por tu visita!
