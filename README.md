@@ -113,6 +113,12 @@ Ingenieria_de_Agentes_y_Automatizacion_con_IA/
 │   └── main.py
 │
 ├── assets/
+│   ├── screenshots/
+│   │   └── debug.png
+│   │   └── sidebar.png
+│   │   └── chat.png
+│   │   └── home.png
+│   │
 │   └── logo_dent.png
 │
 ├── data/
@@ -618,3 +624,27 @@ Principalmente incluye:
 - Configuración general.
 - Variables de entorno.
 - Funciones auxiliares relacionadas con la documentación.
+
+## 📸 Capturas de pantalla
+
+### Pantalla principal
+
+![Pantalla principal](assets/screenshots/home.png)
+
+---
+
+### Consulta al asistente
+
+![Consulta al asistente](assets/screenshots/chat.png)
+
+---
+
+### Gestión documental
+
+![Gestión documental](assets/screenshots/sidebar.png)
+
+---
+
+### Debug interactivo (vista del panel)
+
+![Modo Debug](assets/screenshots/debug.png)
