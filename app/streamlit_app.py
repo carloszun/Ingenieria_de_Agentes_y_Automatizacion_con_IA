@@ -132,6 +132,7 @@ def cargar_recursos():
 
 retriever, llm = cargar_recursos()
 
+
 # ==============================================================================
 # INICIALIZACIÓN DEL HISTORIAL
 #

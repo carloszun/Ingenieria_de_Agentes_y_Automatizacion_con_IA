@@ -4,15 +4,14 @@ Documentos cargados.
 Este módulo muestra los archivos PDF que actualmente forman
 la base documental utilizada por el asistente.
 
-En esta primera versión permite:
+Permite:
 
 - Visualizar los documentos disponibles.
 - Agregar nuevos PDF.
 
-En futuras versiones permitirá:
-
-- Eliminar documentos.
-- Reconstruir el índice FAISS.
+Al agregar un nuevo documento se limpia el caché de recursos
+para que el índice FAISS sea reconstruido automáticamente
+en la siguiente ejecución de la aplicación.
 """
 
 from pathlib import Path
@@ -22,7 +21,6 @@ import streamlit as st
 
 
 DATA_DIR = Path("data")
-
 
 def mostrar_documentos():
     """
@@ -43,30 +41,46 @@ def mostrar_documentos():
 
     if uploaded_file is not None:
 
-        DATA_DIR.mkdir(exist_ok=True)
-
-        destino = DATA_DIR / uploaded_file.name
-
-        with open(destino, "wb") as f:
-
-            shutil.copyfileobj(
-                uploaded_file,
-                f,
-            )
-
-        st.success(
-            f"'{uploaded_file.name}' agregado correctamente."
+        identificador = (
+            uploaded_file.name,
+            uploaded_file.size,
         )
 
-        st.rerun()
+        if (
+            st.session_state.get("ultimo_pdf_subido")
+            != identificador
+        ):
+
+            DATA_DIR.mkdir(exist_ok=True)
+
+            destino = DATA_DIR / uploaded_file.name
+
+            with open(destino, "wb") as f:
+
+                shutil.copyfileobj(
+                    uploaded_file,
+                    f,
+                )
+
+            st.session_state.ultimo_pdf_subido = identificador
+
+            st.success(
+                f"'{uploaded_file.name}' agregado correctamente."
+            )
+
+            # ==================================================
+            # Limpiar el caché de recursos para reconstruir
+            # automáticamente el índice FAISS.
+            # ==================================================
+
+            st.cache_resource.clear()
+            st.rerun()
 
     # ==========================================================
     # Mostrar documentos disponibles
     # ==========================================================
 
-    pdfs = sorted(
-        DATA_DIR.glob("*.pdf")
-    )
+    pdfs = sorted(DATA_DIR.glob("*.pdf"))
 
     if not pdfs:
 
@@ -77,11 +91,40 @@ def mostrar_documentos():
         return
 
     st.caption(
-        "Documentos utilizados por el asistente"
+        f"📚 {len(pdfs)} documento(s) disponible(s)"
     )
+
+    from pypdf import PdfReader
 
     for pdf in pdfs:
 
-        st.write(
-            f"📄 {pdf.name}"
-        )
+        col1, col2 = st.columns([8, 1])
+
+        with col1:
+
+            try:
+                paginas = len(PdfReader(pdf).pages)
+            except Exception:
+                paginas = "?"
+
+            st.write(
+                f"📄 **{pdf.name}**  \n"
+                f"<small>{paginas} página(s)</small>",
+                unsafe_allow_html=True,
+            )
+
+        with col2:
+
+            if st.button(
+                "🗑",
+                key=f"delete_{pdf.name}",
+                help="Eliminar documento",
+            ):
+
+                pdf.unlink()
+
+                st.cache_resource.clear()
+
+                st.rerun()
+
+

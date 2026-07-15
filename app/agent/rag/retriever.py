@@ -11,7 +11,7 @@ def crear_retriever(vector_store: FAISS) -> VectorStoreRetriever:
     return vector_store.as_retriever(
         search_type="mmr",
         search_kwargs={
-            "k": 20,
+            "k": 5,
             "fetch_k": 40,
             "lambda_mult": 0.7,
         }
