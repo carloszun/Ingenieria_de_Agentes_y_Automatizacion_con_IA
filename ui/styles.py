@@ -47,45 +47,37 @@ footer{
 
 
 /* ==========================================================
-   Reducir espacio superior
+   Reducir espacio superior (lo manejamos con el spacer)
 ========================================================== */
 
 .block-container{
-    padding-top:1.2rem;
+    padding-top: 0 !important;  /* Eliminamos el padding para que el header fijo no se desplace */
 }
 
 
 /* ==========================================================
-   Header fijo
+   Header fijo (ahora con position:fixed)
 ========================================================== */
-
 .dent-header{
-
-    position:sticky;
-
-    top:0;
-
-    z-index:999;
-
-    background-color:#0e1117;
-
-    padding-top:15px;
-
-    padding-bottom:10px;
-
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 999;
+    background-color: #0e1117;
+    padding: 15px 30rem 10px 30rem;  /* padding horizontal */
+    border-bottom: 1px solid #2d333b;
 }
 
 
 /* ==========================================================
-   Separador
+   Separador (lo usamos para dar espacio debajo del header)
 ========================================================== */
 
-hr{
-
-    margin-top:10px;
-
-    margin-bottom:20px;
-
+.header-spacer {
+    height: 170px;  /* Ajusta este valor según la altura real de tu header */
 }
 
 
@@ -94,11 +86,8 @@ hr{
 ========================================================== */
 
 .small-font{
-
     font-size:0.85rem;
-
     color:#9aa0a6;
-
 }
 
 
@@ -106,11 +95,7 @@ hr{
    Chat
 ========================================================== */
 
-[data-testid="stChatMessage"]{
-
-    border-radius:12px;
-
-}
+[data-testid="stChatMessage"]{border-radius:12px;}
 
 
 /* ==========================================================
@@ -118,9 +103,7 @@ hr{
 ========================================================== */
 
 .caption{
-
     font-size:0.80rem;
-
 }
 
 </style>

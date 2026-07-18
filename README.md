@@ -37,6 +37,9 @@ Toda la aplicación fue desarrollada utilizando una arquitectura modular basada 
 - [⚙️ Instalación](#️-instalación)
 - [🔑 Configuración](#-configuración)
 - [▶️ Uso de la aplicación](#️-uso-de-la-aplicación)
+- [🚀 Puesta en marcha](#-puesta-en-marcha)
+- [💬 Ejemplos de consultas](#-ejemplos-de-consultas)
+- [💡 Ejemplos de conversación](#-ejemplos-de-conversación)
 - [🧠 Funcionamiento interno](#-funcionamiento-interno)
 - [🧩 Componentes principales](#-componentes-principales)
 - [📸 Capturas de pantalla](#-capturas-de-pantalla)
@@ -336,6 +339,59 @@ Cuando está habilitado se muestra información técnica sobre la ejecución del
 - Tiempo de respuesta.
 
 Esta información resulta útil para comprender el funcionamiento interno del sistema y facilitar las tareas de desarrollo y depuración.
+
+## 🚀 Puesta en marcha
+
+Una vez configurado el entorno y las variables de entorno, iniciar la aplicación con:
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+La aplicación estará disponible en:
+
+```markdown
+Visita la aplicación en <http://localhost:8501>
+```
+
+Al iniciar por primera vez, el sistema:
+
+- Carga los documentos PDF de la carpeta `data/`.
+- Genera los embeddings.
+- Construye el índice vectorial FAISS.
+- Inicializa el modelo de lenguaje.
+- Deja el asistente listo para recibir consultas.
+
+## 💬 Ejemplos de consultas
+
+El asistente puede responder preguntas basadas exclusivamente en la documentación cargada.
+
+Algunos ejemplos:
+
+- ¿Cuál es la política de cancelación de turnos?
+- ¿Atienden los domingos?
+- ¿Qué obras sociales aceptan?
+- ¿Cómo solicito un turno?
+- ¿Debo llegar con alguna preparación especial?
+- ¿Puedo solicitar mi historia clínica?
+- ¿Cómo recibo los resultados?
+- ¿El consultorio cuenta con acceso para personas con movilidad reducida?
+- ¿Qué debo hacer si llego tarde a mi turno?
+
+## 💡 Ejemplos de conversación
+
+> **Usuario:** ¿Atienden los domingos?
+> **Asistente:** No, el consultorio permanece cerrado los domingos. La atención se realiza de lunes a sábado en los horarios establecidos.
+
+---
+
+> **Usuario:** ¿Cómo solicito un turno?
+> **Asistente:** Puede solicitar un turno por teléfono, WhatsApp o desde el formulario disponible en el sitio web del consultorio.
+
+---
+
+> **Usuario:** ¿Qué obras sociales aceptan?
+> **Asistente:** El consultorio trabaja con diversas obras sociales y prepagas. Consulte la documentación institucional para conocer el listado actualizado.
 
 ## 🧠 Funcionamiento interno
 
