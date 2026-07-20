@@ -788,7 +788,7 @@ La aplicación está desplegada en <http://163.176.182.252:8501>.
 ### Infraestructura
 
 | Componente | Detalle |
-
+| ------------------ | -------- |
 | ☁️ Proveedor | Oracle Cloud Infrastructure (OCI) |
 | 🖥️ Sistema operativo | Oracle Linux 8 |
 | 🌐 IP pública | [http://163.176.182.252:8501](http://163.176.182.252:8501) |
