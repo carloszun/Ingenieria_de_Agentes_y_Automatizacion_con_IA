@@ -45,6 +45,7 @@ Toda la aplicación fue desarrollada utilizando una arquitectura modular basada 
 - [📸 Capturas de pantalla](#-capturas-de-pantalla)
 - [🚀 Roadmap](#-roadmap)
 - [👨‍💻 Autor](#-autor)
+- [☁️ Deploy en Oracle Cloud Infrastructure (OCI)](#️-deploy-en-oracle-cloud-infrastructure-oci)
 - [📄 Licencia](#-licencia)
 - [🙏 Agradecimientos](#-agradecimientos)
 - [⭐ ¿Te resultó útil este proyecto?](#-te-resultó-útil-este-proyecto)
@@ -764,7 +765,7 @@ Las siguientes funcionalidades representan la evolución del proyecto.
 ### Despliegue
 
 - [ ] Contenedor Docker.
-- [ ] Despliegue en Oracle Cloud Infrastructure (OCI).
+- [x] Despliegue en Oracle Cloud Infrastructure (OCI).
 - [ ] Autenticación de usuarios.
 - [ ] Panel de administración.
 
@@ -777,6 +778,24 @@ Proyecto desarrollado como trabajo práctico para la materia **Ingeniería de Ag
 - [GitHub](https://github.com/carloszun)
 - [LinkedIn](https://www.linkedin.com/in/carlos-zunino-a847121b/)
 - [Email](zunino.carlos@gmail.com)
+
+## ☁️ Deploy en Oracle Cloud Infrastructure (OCI)
+
+La aplicación está desplegada y accesible públicamente en:
+
+La aplicación está desplegada en <http://163.176.182.252:8501>.
+
+### Infraestructura
+
+ComponenteDetalle☁️ ProveedorOracle Cloud Infrastructure (OCI)🖥️ Sistema operativoOracle Linux 8🌐 IP pública163.176.182.252:8501🔒 Security ListPuerto 8501 TCP abierto desde 0.0.0.0/0🛡️ Firewall SOfirewalld — 8501/tcp habilitado🔐 SELinuxEnforcing — resuelto moviendo app a /opt⚙️ Gestión del serviciosystemd — dent-ai.service🐍 Entorno PythonPython 3.11 + virtualenv en /opt/agentes-ia🚀 Servidor de aplicaciónStreamlit + Uvicorn🔄 Inicio automáticoSí — systemctl enable dent-ai.service
+
+### Evidencia del deploy
+
+![Deploy exitoso](assets/screenshots/deploy.png)
+
+## 🎬 Demo en funcionamiento
+
+![Demo del asistente](assets/demo.gif)
 
 ## 📄 Licencia
 
