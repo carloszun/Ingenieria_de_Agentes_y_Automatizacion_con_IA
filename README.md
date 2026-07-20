@@ -142,8 +142,10 @@ Ingenieria_de_Agentes_y_Automatizacion_con_IA/
 │   │   └── sidebar.png
 │   │   └── chat.png
 │   │   └── home.png
+│   │   └── deploy.png
 │   │
 │   └── logo_dent.png
+│   └── demo.gif
 │
 ├── data/
 │   └── DENT_Manual_Institucional.pdf
@@ -732,42 +734,42 @@ Las siguientes funcionalidades representan la evolución del proyecto.
 
 ### Interfaz
 
-- [x] Chat conversacional.
-- [x] Estados visuales del agente.
-- [x] Modo Debug.
-- [ ] Streaming de respuestas en tiempo real.
-- [ ] Tema claro y oscuro.
+- ✅ Chat conversacional.
+- ✅ Estados visuales del agente.
+- ✅ Modo Debug.
+- ❌ Streaming de respuestas en tiempo real.
+- ❌ Tema claro y oscuro.
 
 ### Vista de gestión documental
 
-- [x] Visualización de la base documental.
-- [x] Incorporación de nuevos documentos PDF.
-- [x] Eliminación de documentos PDF.
-- [x] Reconstrucción automática del índice FAISS.
-- [ ] Soporte para documentos DOCX y TXT.
+- ✅ Visualización de la base documental.
+- ✅ Incorporación de nuevos documentos PDF.
+- ✅ Eliminación de documentos PDF.
+- ✅ Reconstrucción automática del índice FAISS.
+- ❌ Soporte para documentos DOCX y TXT.
 
 ### Inteligencia del agente
 
-- [x] Arquitectura basada en LangGraph.
-- [x] Router inteligente.
-- [x] Retrieval-Augmented Generation (RAG).
-- [x] History-Aware Retrieval.
-- [x] Memoria conversacional.
-- [ ] Citas textuales del documento en las respuestas.
-- [ ] Soporte para múltiples proveedores de LLM.
+- ✅ Arquitectura basada en LangGraph.
+- ✅ Router inteligente.
+- ✅ Retrieval-Augmented Generation (RAG).
+- ✅ History-Aware Retrieval.
+- ✅ Memoria conversacional.
+- ❌ Citas textuales del documento en las respuestas.
+- ❌ Soporte para múltiples proveedores de LLM.
 
 ### Rendimiento
 
-- [ ] Persistencia del índice FAISS en disco.
-- [ ] Indexación incremental de documentos.
-- [ ] Caché de embeddings.
+- ❌ Persistencia del índice FAISS en disco.
+- ❌ Indexación incremental de documentos.
+- ❌ Caché de embeddings.
 
 ### Despliegue
 
-- [ ] Contenedor Docker.
-- [x] Despliegue en Oracle Cloud Infrastructure (OCI).
-- [ ] Autenticación de usuarios.
-- [ ] Panel de administración.
+- ❌ Contenedor Docker.
+- ✅ Despliegue en Oracle Cloud Infrastructure (OCI).
+- ❌ Autenticación de usuarios.
+- ❌ Panel de administración.
 
 ## 👨‍💻 Autor
 
