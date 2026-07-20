@@ -787,7 +787,18 @@ La aplicación está desplegada en <http://163.176.182.252:8501>.
 
 ### Infraestructura
 
-ComponenteDetalle☁️ ProveedorOracle Cloud Infrastructure (OCI)🖥️ Sistema operativoOracle Linux 8🌐 IP pública163.176.182.252:8501🔒 Security ListPuerto 8501 TCP abierto desde 0.0.0.0/0🛡️ Firewall SOfirewalld — 8501/tcp habilitado🔐 SELinuxEnforcing — resuelto moviendo app a /opt⚙️ Gestión del serviciosystemd — dent-ai.service🐍 Entorno PythonPython 3.11 + virtualenv en /opt/agentes-ia🚀 Servidor de aplicaciónStreamlit + Uvicorn🔄 Inicio automáticoSí — systemctl enable dent-ai.service
+| Componente | Detalle |
+
+| ☁️ Proveedor | Oracle Cloud Infrastructure (OCI) |
+| 🖥️ Sistema operativo | Oracle Linux 8 |
+| 🌐 IP pública | [http://163.176.182.252:8502](http://163.176.182.252:8502) |
+| 🔒 Security List | Puerto 8502 TCP abierto desde `0.0.0.0/0` |
+| 🛡️ Firewall SO | `firewalld` — 8502/tcp habilitado |
+| 🔐 SELinux | `Enforcing` — resuelto moviendo app a `/opt` |
+| ⚙️ Gestión del servicio | `systemd` — `dent-ai.service` |
+| 🐍 Entorno Python | Python 3.11 + virtualenv en `/opt/agentes-ia` |
+| 🚀 Servidor de aplicación | Streamlit + Uvicorn |
+| 🔄 Inicio automático | Sí — `systemctl enable dent-ai.service` |
 
 ### Evidencia del deploy
 
