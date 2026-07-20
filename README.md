@@ -791,9 +791,9 @@ La aplicación está desplegada en <http://163.176.182.252:8501>.
 
 | ☁️ Proveedor | Oracle Cloud Infrastructure (OCI) |
 | 🖥️ Sistema operativo | Oracle Linux 8 |
-| 🌐 IP pública | [http://163.176.182.252:8502](http://163.176.182.252:8502) |
-| 🔒 Security List | Puerto 8502 TCP abierto desde `0.0.0.0/0` |
-| 🛡️ Firewall SO | `firewalld` — 8502/tcp habilitado |
+| 🌐 IP pública | [http://163.176.182.252:8501](http://163.176.182.252:8501) |
+| 🔒 Security List | Puerto 8501 TCP abierto desde `0.0.0.0/0` |
+| 🛡️ Firewall SO | `firewalld` — 8501/tcp habilitado |
 | 🔐 SELinux | `Enforcing` — resuelto moviendo app a `/opt` |
 | ⚙️ Gestión del servicio | `systemd` — `dent-ai.service` |
 | 🐍 Entorno Python | Python 3.11 + virtualenv en `/opt/agentes-ia` |
